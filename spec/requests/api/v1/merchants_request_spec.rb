@@ -103,7 +103,6 @@ describe "Items API" do
 
     get "/api/v1/merchants/#{merchants[0].id}/items"
 
-
     expect(response).to be_successful
     expect(Merchant.count).to eq(2)
     expect(merchants[0].items.count).to eq(1)
@@ -124,12 +123,21 @@ describe "Items API" do
       })
     headers = {"CONTENT_TYPE" => "application/json"}
     post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
-
-    get "/api/v1/items/#{Item.last.id}/merchant"
+    id = Item.first.id
+    get "/api/v1/items/#{id}/merchant"
+    merchant_response = JSON.parse(response.body, symbolize_names: true)
+    first_merchant = Merchant.first
 
     expect(response).to be_successful
-    require "pry"; binding.pry
-    expect(merchants[0].items.count).to eq(1)
-    expect(merchants[1].items.count).to eq(0)
+
+    expect(merchant_response).to have_key(:id)
+    expect(merchant_response[:id]).to eq(first_merchant.id)
+
+    expect(merchant_response).to have_key(:name)
+    expect(merchant_response[:name]).to eq(first_merchant.name)
+
+    expect(merchant_response).to have_key(:created_at)
+
+    expect(merchant_response).to have_key(:updated_at)
   end
 end
