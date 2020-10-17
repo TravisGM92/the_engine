@@ -6,5 +6,6 @@ FactoryBot.define do
     merchant_id { Faker::Number.within(range: 1..900) }
     created_at { Faker::Date.between(from: 100.days.ago, to: Date.today) }
     updated_at { Faker::Date.between(from: 200.days.ago, to: Date.today) }
+    merchant
   end
 end

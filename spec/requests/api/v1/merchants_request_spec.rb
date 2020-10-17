@@ -87,26 +87,27 @@ describe "Items API" do
   end
 
   it "can show all items related to that specific merchant" do
-    merchant = create(:merchant)
-    expect(Merchant.count).to eq(1)
+    merchants = create_list(:merchant, 2)
+    expect(Merchant.count).to eq(2)
 
     item_params = ({
       name: 'The hammer',
       description: 'Nice to hit things with',
       unit_price: 3,
-      merchant_id: merchant.id,
+      merchant_id: merchants[0].id,
       created_at: '01-06-1993',
       updated_at: '02-12-2000'
       })
     headers = {"CONTENT_TYPE" => "application/json"}
     post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
 
-    get "/api/v1/merchants/#{merchant.id}/items"
-    require "pry"; binding.pry
+    get "/api/v1/merchants/#{merchants[0].id}/items"
+
 
     expect(response).to be_successful
-    expect(Merchant.count).to eq(0)
-    expect{Merchant.find(merchant.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    expect(Merchant.count).to eq(2)
+    expect(merchants[0].items.count).to eq(1)
+    expect(merchants[1].items.count).to eq(0)
   end
 
 end

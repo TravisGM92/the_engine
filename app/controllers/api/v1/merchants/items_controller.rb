@@ -1,6 +1,6 @@
 class Api::V1::Merchants::ItemsController < ApplicationController
   def index
-    require "pry"; binding.pry
+    items = Merchant.find(params[:id]).items
+    render json: items
   end
-
 end
