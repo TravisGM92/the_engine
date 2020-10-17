@@ -1,8 +1,10 @@
 FactoryBot.define do
   factory :item do
-    name { "Toolbox" }
-    description { "The nicest!" }
-    unit_price { 3.99 }
-    merchant_id { 4 }
+    name { Faker::Commerce.material }
+    description { Faker::Lorem.paragraph }
+    unit_price { Faker::Number.within(range: 1..9000) }
+    merchant_id { Faker::Number.within(range: 1..900) }
+    created_at { Faker::Date.between(from: 100.days.ago, to: Date.today) }
+    updated_at { Faker::Date.between(from: 200.days.ago, to: Date.today) }
   end
 end
