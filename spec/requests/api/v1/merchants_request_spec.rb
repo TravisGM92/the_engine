@@ -110,4 +110,26 @@ describe "Items API" do
     expect(merchants[1].items.count).to eq(0)
   end
 
+  it "can show a specific merchant when given an item's id" do
+    merchants = create_list(:merchant, 2)
+    expect(Merchant.count).to eq(2)
+
+    item_params = ({
+      name: 'The hammer',
+      description: 'Nice to hit things with',
+      unit_price: 3,
+      merchant_id: merchants[0].id,
+      created_at: '01-06-1993',
+      updated_at: '02-12-2000'
+      })
+    headers = {"CONTENT_TYPE" => "application/json"}
+    post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+
+    get "/api/v1/items/#{Item.last.id}/merchant"
+
+    expect(response).to be_successful
+    require "pry"; binding.pry
+    expect(merchants[0].items.count).to eq(1)
+    expect(merchants[1].items.count).to eq(0)
+  end
 end
