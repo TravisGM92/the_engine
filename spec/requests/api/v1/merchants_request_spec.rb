@@ -70,7 +70,6 @@ describe "Items API" do
 
     patch "/api/v1/merchants/#{id}", headers: headers, params: JSON.generate({merchant: merchant_params})
     merchant = Merchant.find_by(id: id)
-
     expect(response).to be_successful
     expect(merchant.updated_at).to_not eq('05-10-19')
     expect(merchant.updated_at).to eq('10-10-20')
@@ -81,6 +80,29 @@ describe "Items API" do
     expect(Merchant.count).to eq(1)
 
     expect{ delete "/api/v1/merchants/#{merchant.id}"}.to change(Merchant, :count).by(-1)
+
+    expect(response).to be_successful
+    expect(Merchant.count).to eq(0)
+    expect{Merchant.find(merchant.id)}.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "can show all items related to that specific merchant" do
+    merchant = create(:merchant)
+    expect(Merchant.count).to eq(1)
+
+    item_params = ({
+      name: 'The hammer',
+      description: 'Nice to hit things with',
+      unit_price: 3,
+      merchant_id: merchant.id,
+      created_at: '01-06-1993',
+      updated_at: '02-12-2000'
+      })
+    headers = {"CONTENT_TYPE" => "application/json"}
+    post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+
+    get "/api/v1/merchants/#{merchant.id}/items"
+    require "pry"; binding.pry
 
     expect(response).to be_successful
     expect(Merchant.count).to eq(0)
