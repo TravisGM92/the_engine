@@ -140,4 +140,16 @@ describe "Items API" do
 
     expect(merchant_response).to have_key(:updated_at)
   end
+
+  it "can find an item by it's name" do
+    data = create(:merchant)
+
+    get "/api/v1/merchants/find?name=#{data.name}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
+
+  end
 end

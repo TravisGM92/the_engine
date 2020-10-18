@@ -110,4 +110,16 @@ describe "Items API" do
     expect(Item.count).to eq(0)
     expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
+
+  it "can find an item by it's name" do
+    data = create(:item)
+
+    get "/api/v1/items/find?name=#{data.name}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
+
+  end
 end
