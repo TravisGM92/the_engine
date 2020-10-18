@@ -149,7 +149,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result[0]['name']).to eq(data[:name])
+    expect(result['name']).to eq(data[:name])
   end
 
   it "can find an item by it's created at" do

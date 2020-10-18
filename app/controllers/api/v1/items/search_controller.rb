@@ -1,12 +1,6 @@
 class Api::V1::Items::SearchController < ApplicationController
   def show
-    if params.keys[0] == "name"
-      render json: Item.where(["LOWER(name) LIKE ?", "%#{params[:name].downcase}"])
-    elsif params.keys[0] == "description"
-      render json: Item.where(["LOWER(description) LIKE ?", "%#{params[:description].downcase}"])
-    else
-      render json: Item.find_by(item_params)
-    end
+    render json: Item.find_by(item_params)
   end
 
   private
