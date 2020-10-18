@@ -150,6 +150,27 @@ describe "Items API" do
     result = JSON.parse(response.body)
 
     expect(result['name']).to eq(data[:name])
+  end
 
+  it "can find an item by it's created at" do
+    data = create(:merchant)
+
+    get "/api/v1/merchants/find?created_at=#{data.created_at}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
+  end
+
+  it "can find an item by it's updated at" do
+    data = create(:merchant)
+
+    get "/api/v1/merchants/find?updated_at=#{data.updated_at}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
   end
 end

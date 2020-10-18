@@ -119,7 +119,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result[0]['name']).to eq(data[:name])
 
   end
 
@@ -142,7 +142,9 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result.length).to eq(1)
+    expect(result[0]['id']).to eq(data[:id])
+
   end
 
   it "can find an item by it's unit price" do
@@ -176,5 +178,39 @@ describe "Items API" do
     result = JSON.parse(response.body)
 
     expect(result['name']).to eq(data[:name])
+  end
+
+  it "can find multiple items that fit the description" do
+    merchant = create(:merchant)
+    item1 = merchant.items.create!({
+      name: 'Hammer',
+      description: 'Nice to hit things with',
+      unit_price: 3,
+      created_at: '01-06-1993',
+      updated_at: '02-12-2000'
+      })
+
+    item2 = merchant.items.create!({
+      name: 'The Yello hammer',
+      description: 'Nice to hit things with',
+      unit_price: 3,
+      created_at: '02-06-1980',
+      updated_at: '04-12-2010'
+      })
+
+    item3 = merchant.items.create!({
+      name: 'The Yello Screwdriver',
+      description: 'Nice to screw things with',
+      unit_price: 2,
+      created_at: '02-06-1980',
+      updated_at: '04-12-2010'
+      })
+
+    get "/api/v1/items/find?name=#{item1[:name]}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result.length).to eq(2)
   end
 end
