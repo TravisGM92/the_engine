@@ -122,4 +122,59 @@ describe "Items API" do
     expect(result['name']).to eq(data[:name])
 
   end
+
+  it "can find an item by it's id" do
+    data = create(:item)
+
+    get "/api/v1/items/find?id=#{data.id}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
+  end
+
+  it "can find an item by it's description" do
+    data = create(:item)
+
+    get "/api/v1/items/find?description=#{data.description}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
+  end
+
+  it "can find an item by it's unit price" do
+    data = create(:item)
+
+    get "/api/v1/items/find?unit_price=#{data.unit_price}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
+  end
+
+  it "can find an item by it's created at" do
+    data = create(:item)
+
+    get "/api/v1/items/find?created_at=#{data.created_at}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
+  end
+
+  it "can find an item by it's updated at" do
+    data = create(:item)
+
+    get "/api/v1/items/find?updated_at=#{data.updated_at}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['name']).to eq(data[:name])
+  end
 end
