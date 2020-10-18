@@ -173,4 +173,31 @@ describe "Items API" do
 
     expect(result['name']).to eq(data[:name])
   end
+
+  it "can find multiple merchants that fit the name" do
+    merchant1 = Merchant.create!({
+      name: 'Hammer George',
+      created_at: '01-06-1993',
+      updated_at: '02-12-2000'
+      })
+
+    merchant2 = Merchant.create!({
+      name: 'George Pinky',
+      created_at: '02-06-1980',
+      updated_at: '04-12-2010'
+      })
+
+    merchant3 = Merchant.create!({
+      name: 'Timothy',
+      created_at: '01-06-1993',
+      updated_at: '04-12-2010'
+      })
+
+    get "/api/v1/merchants/find_all?name=#{merchant1[:name]}"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result.length).to eq(2)
+  end
 end

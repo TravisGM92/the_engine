@@ -44,6 +44,7 @@ end
 
 CSV.foreach('db/data/items.csv', :headers => true) do |row|
   Item.create!({
+    id: row["id"],
     name: row["name"],
     description: row["description"],
     unit_price: ((row["unit_price"].to_f / 100).round(2)),

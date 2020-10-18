@@ -39,7 +39,8 @@ ActiveRecord::Schema.define(version: 2020_10_16_231050) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "items", force: :cascade do |t|
+  create_table "items", id: false, force: :cascade do |t|
+    t.string "id"
     t.string "name"
     t.string "description"
     t.string "unit_price"
