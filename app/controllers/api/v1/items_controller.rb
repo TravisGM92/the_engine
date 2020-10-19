@@ -9,20 +9,26 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    render json: Item.create(item_params)
+    if params[:id].nil?
+      id = Item.last[:id].to_i + 1
+      render json: ItemSerializer.new(Item.create({id: "#{id}", name: item_params[:name], description: item_params[:description], unit_price: item_params[:unit_price], merchant_id: item_params[:merchant_id], created_at: Time.now, updated_at: Time.now}))
+    else
+      render json: ItemSerializer.new(Item.create(item_params))
+    end
   end
 
   def update
-    render json: Item.update(params[:id], item_params)
+    render json: ItemSerializer.new(Item.update(params[:id], item_params))
   end
 
   def destroy
-    render json: Item.destroy(params[:id])
+    Item.destroy(params[:id])
+    render :status => 204
   end
 
   private
 
   def item_params
-    params.require(:item).permit(:name, :description, :unit_price, :merchant_id, :created_at, :updated_at)
+    params.permit(:name, :description, :unit_price, :merchant_id, :created_at, :updated_at)
   end
 end
