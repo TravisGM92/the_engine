@@ -11,7 +11,7 @@ class Api::V1::Merchants::SearchController < ApplicationController
   def index
     if params.keys[0] == "name"
       names = Merchant.downcase_split_names(params[:name])
-      render json: MerchantSerializer.new(Merchant.where("LOWER(name) LIKE ?", "#{names[0]}%").or(Merchant.where("LOWER(name) LIKE ?", "#{names[1]}%")))
+      render json: MerchantSerializer.new(Merchant.where("LOWER(name) LIKE ?", "%#{params[:name].downcase}%"))
     else
       attribute = params.keys[0].to_sym
       render json: Item.where(attribute => params[attribute])

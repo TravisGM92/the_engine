@@ -196,7 +196,7 @@ describe "Items API" do
       updated_at: '04-12-2010'
       })
 
-    get "/api/v1/merchants/find_all?name=#{merchant1[:name]}"
+    get "/api/v1/merchants/find_all?name=orge"
     expect(response).to be_successful
 
     result = JSON.parse(response.body)
