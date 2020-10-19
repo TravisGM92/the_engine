@@ -10,26 +10,23 @@ describe "Items API" do
 
     items = JSON.parse(response.body)
 
-    expect(items.count).to eq(5)
+    expect(items["data"].count).to eq(5)
+    items["data"].each do |item|
 
-    items.each do |item|
-      expect(item).to have_key('id')
-      expect(item['id']).to be_an(Integer)
+      expect(item["attributes"]).to have_key('description')
+      expect(item["attributes"]['description']).to be_a(String)
 
-      expect(item).to have_key('description')
-      expect(item['description']).to be_a(String)
+      expect(item["attributes"]).to have_key('unit_price')
+      expect(item["attributes"]['unit_price']).to be_an(Float)
 
-      expect(item).to have_key('unit_price')
-      expect(item['unit_price']).to be_an(Integer)
+      expect(item["attributes"]).to have_key('merchant_id')
+      expect(item["attributes"]['merchant_id']).to be_an(Integer)
 
-      expect(item).to have_key('merchant_id')
-      expect(item['merchant_id']).to be_an(Integer)
+      expect(item["attributes"]).to have_key('created_at')
+      expect(item["attributes"]['created_at']).to be_a(String)
 
-      expect(item).to have_key('created_at')
-      expect(item['created_at']).to be_a(String)
-
-      expect(item).to have_key('updated_at')
-      expect(item['updated_at']).to be_a(String)
+      expect(item["attributes"]).to have_key('updated_at')
+      expect(item["attributes"]['updated_at']).to be_a(String)
 
     end
   end
@@ -43,23 +40,20 @@ describe "Items API" do
 
       item = JSON.parse(response.body)
 
-      expect(item).to have_key('id')
-      expect(item['id']).to be_an(Integer)
+      expect(item["data"][0]["attributes"]).to have_key('description')
+      expect(item["data"][0]["attributes"]['description']).to be_a(String)
 
-      expect(item).to have_key('description')
-      expect(item['description']).to be_a(String)
+      expect(item["data"][0]["attributes"]).to have_key('unit_price')
+      expect(item["data"][0]["attributes"]['unit_price']).to be_an(Float)
 
-      expect(item).to have_key('unit_price')
-      expect(item['unit_price']).to be_an(Integer)
+      expect(item["data"][0]["attributes"]).to have_key('merchant_id')
+      expect(item["data"][0]["attributes"]['merchant_id']).to be_an(Integer)
 
-      expect(item).to have_key('merchant_id')
-      expect(item['merchant_id']).to be_an(Integer)
+      expect(item["data"][0]["attributes"]).to have_key('created_at')
+      expect(item["data"][0]["attributes"]['created_at']).to be_a(String)
 
-      expect(item).to have_key('created_at')
-      expect(item['created_at']).to be_a(String)
-
-      expect(item).to have_key('updated_at')
-      expect(item['updated_at']).to be_a(String)
+      expect(item["data"][0]["attributes"]).to have_key('updated_at')
+      expect(item["data"][0]["attributes"]['updated_at']).to be_a(String)
   end
 
   it "can create a new item" do
@@ -86,13 +80,21 @@ describe "Items API" do
   end
 
   it "can update an existing item" do
-    id = create(:item).id
+    merchant = create(:merchant)
+    item1 = merchant.items.create!({
+      name: 'Hammer',
+      id: 2,
+      description: 'Nice to hit things with',
+      unit_price: 3,
+      created_at: '01-06-1993',
+      updated_at: '02-12-2000'
+      })
     previous_name = Item.last.name
     item_params = { name: 'The Spoon' }
     headers = {"CONTENT_TYPE" => 'application/json'}
 
-    patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
-    item = Item.find_by(id: id)
+    patch "/api/v1/items/#{item1.id}", headers: headers, params: JSON.generate({item: item_params})
+    item = Item.find_by(id: item1.id)
 
     expect(response).to be_successful
     expect(item.name).to_not eq(previous_name)
@@ -100,15 +102,23 @@ describe "Items API" do
   end
 
   it "can destroy an item" do
-    item = create(:item)
+    merchant = create(:merchant)
+    item1 = merchant.items.create!({
+      name: 'Hammer',
+      id: 3,
+      description: 'Nice to hit things with',
+      unit_price: 3,
+      created_at: '01-06-1993',
+      updated_at: '02-12-2000'
+      })
 
     expect(Item.count).to eq(1)
 
-    expect{ delete "/api/v1/items/#{item.id}" }.to change(Item, :count).by(-1)
+    expect{ delete "/api/v1/items/#{item1.id}" }.to change(Item, :count).by(-1)
 
     expect(response).to be_successful
     expect(Item.count).to eq(0)
-    expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    expect{Item.find(item1.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 
   it "can find an item by it's name" do
@@ -124,14 +134,22 @@ describe "Items API" do
   end
 
   it "can find an item by it's id" do
-    data = create(:item)
+    merchant = create(:merchant)
+    item1 = merchant.items.create!({
+      name: 'Hammer',
+      id: 3,
+      description: 'Nice to hit things with',
+      unit_price: 3,
+      created_at: '01-06-1993',
+      updated_at: '02-12-2000'
+      })
 
-    get "/api/v1/items/find?id=#{data.id}"
+    get "/api/v1/items/find?id=#{item1.id}"
     expect(response).to be_successful
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result['name']).to eq(item1[:name])
   end
 
   it "can find an item by it's description" do

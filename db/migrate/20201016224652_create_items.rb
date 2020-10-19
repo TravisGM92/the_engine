@@ -4,7 +4,7 @@ class CreateItems < ActiveRecord::Migration[5.2]
       t.string :id
       t.string :name
       t.string :description
-      t.string :unit_price
+      t.float :unit_price
       t.integer :merchant_id
 
       t.timestamps null: false

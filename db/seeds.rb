@@ -47,7 +47,7 @@ CSV.foreach('db/data/items.csv', :headers => true) do |row|
     id: row["id"],
     name: row["name"],
     description: row["description"],
-    unit_price: ((row["unit_price"].to_f / 100).round(2)),
+    unit_price: (((row["unit_price"]).to_f) / 100),
     merchant_id: row["merchant_id"],
     created_at: row["created_at"],
     updated_at: row["updated_at"]})
@@ -67,7 +67,7 @@ CSV.foreach('db/data/invoice_items.csv', :headers => true) do |row|
     item_id: row["item_id"],
     invoice_id: row["invoice_id"],
     quantity: row["quantity"],
-    unit_price: ((row["unit_price"].to_f / 100).round(2).to_s),
+    unit_price: ((row["unit_price"].to_f).round(2)),
     created_at: row["created_at"],
     updated_at: row["updated_at"]})
 end

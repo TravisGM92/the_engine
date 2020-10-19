@@ -113,17 +113,18 @@ describe "Items API" do
     merchants = create_list(:merchant, 2)
     expect(Merchant.count).to eq(2)
 
-    item_params = ({
+    Item.create!({
       name: 'The hammer',
+      id: 3,
       description: 'Nice to hit things with',
       unit_price: 3,
       merchant_id: merchants[0].id,
       created_at: '01-06-1993',
       updated_at: '02-12-2000'
       })
-    headers = {"CONTENT_TYPE" => "application/json"}
-    post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+
     id = Item.first.id
+
     get "/api/v1/items/#{id}/merchant"
     merchant_response = JSON.parse(response.body, symbolize_names: true)
     first_merchant = Merchant.first
