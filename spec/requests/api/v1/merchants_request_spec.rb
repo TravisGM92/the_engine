@@ -9,17 +9,17 @@ describe "Items API" do
     expect(response).to be_successful
     merchants = JSON.parse(response.body, symbolize_names: true)
 
-    expect(merchants.count).to eq(5)
+    expect(merchants[:data].length).to eq(5)
 
-    merchants.each do |merchant|
-      expect(merchant).to have_key(:name)
-      expect(merchant[:name]).to be_a(String)
+    merchants[:data].each do |merchant|
+      expect(merchant[:attributes]).to have_key(:name)
+      expect(merchant[:attributes][:name]).to be_a(String)
 
-      expect(merchant).to have_key(:created_at)
-      expect(merchant[:created_at]).to be_a(String)
+      expect(merchant[:attributes]).to have_key(:created_at)
+      expect(merchant[:attributes][:created_at]).to be_a(String)
 
-      expect(merchant).to have_key(:updated_at)
-      expect(merchant[:updated_at]).to be_a(String)
+      expect(merchant[:attributes]).to have_key(:updated_at)
+      expect(merchant[:attributes][:updated_at]).to be_a(String)
     end
   end
 
@@ -29,7 +29,7 @@ describe "Items API" do
     get "/api/v1/merchants/#{id}"
 
     expect(response).to be_successful
-    merchant = JSON.parse(response.body, symbolize_names: true)
+    merchant = JSON.parse(response.body, symbolize_names: true)[:data][:attributes]
 
     expect(merchant).to have_key(:id)
     expect(merchant[:id]).to eq(id)
@@ -47,11 +47,12 @@ describe "Items API" do
   it "can create a mechant" do
     merchant_params = ({
       name: 'George Clooney',
+      id: '3',
       created_at: '03-04-04',
       updated_at: '05-10-19'
       })
       headers = {"CONTENT_TYPE" => "application/json"}
-      post "/api/v1/merchants", headers: headers, params: JSON.generate(merchant: merchant_params)
+      post "/api/v1/merchants", headers: headers, params: JSON.generate(merchant_params)
       created_merchant = Merchant.last
 
       expect(response).to be_successful
@@ -65,14 +66,14 @@ describe "Items API" do
 
     previous_name = Merchant.last.name
 
-    merchant_params = { updated_at: '10-10-20' }
+    merchant_params = { updated_at: '2020-10-19' }
     headers = {'CONTENT_TYPE' => 'application/json'}
 
-    patch "/api/v1/merchants/#{id}", headers: headers, params: JSON.generate({merchant: merchant_params})
+    patch "/api/v1/merchants/#{id}", headers: headers, params: JSON.generate(merchant_params)
     merchant = Merchant.find_by(id: id)
     expect(response).to be_successful
     expect(merchant.updated_at).to_not eq('05-10-19')
-    expect(merchant.updated_at).to eq('10-10-20')
+    expect(merchant.updated_at).to eq('2020-10-19')
   end
 
   it "can destroy an existing record" do
@@ -92,6 +93,7 @@ describe "Items API" do
 
     item_params = ({
       name: 'The hammer',
+      id: 2,
       description: 'Nice to hit things with',
       unit_price: 3,
       merchant_id: merchants[0].id,
@@ -99,7 +101,7 @@ describe "Items API" do
       updated_at: '02-12-2000'
       })
     headers = {"CONTENT_TYPE" => "application/json"}
-    post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+    post "/api/v1/items", headers: headers, params: JSON.generate(item_params)
 
     get "/api/v1/merchants/#{merchants[0].id}/items"
 
@@ -131,15 +133,15 @@ describe "Items API" do
 
     expect(response).to be_successful
 
-    expect(merchant_response).to have_key(:id)
-    expect(merchant_response[:id]).to eq(first_merchant.id)
+    expect(merchant_response[:data][:attributes]).to have_key(:id)
+    expect(merchant_response[:data][:attributes][:id]).to eq(first_merchant.id)
 
-    expect(merchant_response).to have_key(:name)
-    expect(merchant_response[:name]).to eq(first_merchant.name)
+    expect(merchant_response[:data][:attributes]).to have_key(:name)
+    expect(merchant_response[:data][:attributes][:name]).to eq(first_merchant.name)
 
-    expect(merchant_response).to have_key(:created_at)
+    expect(merchant_response[:data][:attributes]).to have_key(:created_at)
 
-    expect(merchant_response).to have_key(:updated_at)
+    expect(merchant_response[:data][:attributes]).to have_key(:updated_at)
   end
 
   it "can find an item by it's name" do
@@ -150,7 +152,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result['data']['attributes']['name']).to eq(data[:name])
   end
 
   it "can find an item by it's created at" do
@@ -161,7 +163,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result['data'][0]['attributes']['name']).to eq(data[:name])
   end
 
   it "can find an item by it's updated at" do
@@ -172,7 +174,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result['data'][0]['attributes']['name']).to eq(data[:name])
   end
 
   it "can find multiple merchants that fit the name" do
@@ -199,6 +201,6 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result.length).to eq(2)
+    expect(result['data'].length).to eq(2)
   end
 end

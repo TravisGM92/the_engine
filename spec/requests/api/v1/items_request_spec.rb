@@ -58,16 +58,19 @@ describe "Items API" do
 
   it "can create a new item" do
     merchant = create(:merchant)
+
     item_params = ({
       name: 'The hammer',
+      id: '1',
       description: 'Nice to hit things with',
       unit_price: 3,
       merchant_id: merchant.id,
       created_at: '01-06-1993',
       updated_at: '02-12-2000'
       })
+
       headers = {"CONTENT_TYPE" => "application/json"}
-      post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+      post "/api/v1/items", headers: headers, params: JSON.generate(item_params)
       created_item = Item.last
       expect(response).to be_successful
 
@@ -93,7 +96,7 @@ describe "Items API" do
     item_params = { name: 'The Spoon' }
     headers = {"CONTENT_TYPE" => 'application/json'}
 
-    patch "/api/v1/items/#{item1.id}", headers: headers, params: JSON.generate({item: item_params})
+    patch "/api/v1/items/#{item1.id}", headers: headers, params: JSON.generate(item_params)
     item = Item.find_by(id: item1.id)
 
     expect(response).to be_successful
@@ -129,7 +132,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result['data']['attributes']['name']).to eq(data[:name])
 
   end
 
@@ -149,7 +152,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(item1[:name])
+    expect(result['data'][0]['attributes']['name']).to eq(item1[:name])
   end
 
   it "can find an item by it's description" do
@@ -172,7 +175,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result['data'][0]['attributes']['name']).to eq(data[:name])
   end
 
   it "can find an item by it's created at" do
@@ -183,7 +186,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result['data'][0]['attributes']['name']).to eq(data[:name])
   end
 
   it "can find an item by it's updated at" do
@@ -194,7 +197,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['name']).to eq(data[:name])
+    expect(result['data'][0]['attributes']['name']).to eq(data[:name])
   end
 
   it "can find multiple items that fit the name" do
@@ -228,7 +231,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result.length).to eq(2)
+    expect(result['data'].length).to eq(2)
   end
 
   it "can find multiple items that fit the desription" do
@@ -262,7 +265,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result.length).to eq(3)
+    expect(result['data'].length).to eq(3)
   end
 
   it "can find multiple items that fit the unit price" do
@@ -296,7 +299,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result.length).to eq(2)
+    expect(result['data'].length).to eq(2)
   end
 
   it "can find multiple items that fit the created at" do
@@ -330,7 +333,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result.length).to eq(2)
+    expect(result['data'].length).to eq(2)
   end
 
   it "can find multiple items that fit the updated at" do
@@ -364,6 +367,6 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result.length).to eq(2)
+    expect(result['data'].length).to eq(2)
   end
 end
