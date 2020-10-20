@@ -6,4 +6,13 @@ class Invoice < ApplicationRecord
 
   belongs_to :merchant
   belongs_to :customer
+
+  def self.most_expensive(limit = 5, sorting = "DESC")
+  select("invoices.*, SUM(invoice_items.quantity * invoice_items.unit_price) AS revenue")
+    .joins(:invoice_items, :transactions)
+    .where(transactions: {result: "success"})
+    .group(:id)
+    .order("revenue #{sorting}")
+    .limit(limit)
+  end
 end

@@ -12,4 +12,24 @@ describe Transaction, type: :model do
   describe 'relationships' do
     it {should belong_to :invoice}
   end
+
+  describe ".succcessful" do
+    it 'only finds the successful transactions' do
+      invoices = []
+      result = []
+      5.times do
+        customer = create(:customer)
+        merchant = create(:merchant)
+        invoices << create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+      end
+      2.times do
+        result << create(:transaction, invoice_id: invoices.pop.id, result: 'success')
+      end
+      2.times do
+        create(:transaction, invoice_id: invoices.pop.id, result: 'failed')
+      end
+
+      expect(Transaction.successful).to eq(result)
+    end
+  end
 end
