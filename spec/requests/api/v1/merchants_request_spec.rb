@@ -205,29 +205,22 @@ describe "Items API" do
   end
 
   it "can find merchants with most revenue, ranked and limited" do
-    merchant1 = Merchant.create!({
-      name: 'Hammer George',
-      created_at: '01-06-1993',
-      updated_at: '02-12-2000'
-      })
+    merchants = create_list(:merchant, 3)
+    customers = create_list(:customer, 3)
+    invoices = []
+    merchants.each{ |merchant| create_list(:item, 2, merchant_id: merchant.id)}
+    merchants.each{ |merchant| customers.each{ |customer| invoices << create(:invoice, merchant_id: merchant.id, customer_id: customer.id)}}
+    invoices.each{ |invoice| create(:transaction, invoice_id: invoice.id)}
 
-    merchant2 = Merchant.create!({
-      name: 'George Pinky',
-      created_at: '02-06-1980',
-      updated_at: '04-12-2010'
-      })
+    x = 0
+    invoices.each do |invoice|
+      create(:invoice_item, invoice_id: invoice.id, quantity: x += 100, unit_price: 10)
+    end
 
-    merchant3 = Merchant.create!({
-      name: 'Timothy',
-      created_at: '01-06-1993',
-      updated_at: '04-12-2010'
-      })
-
-    get "/api/v1/merchants/find_all?name=orge"
+    get "/api/v1/merchants/most_revenue?quantity=2"
     expect(response).to be_successful
 
     result = JSON.parse(response.body)
-
     expect(result['data'].length).to eq(2)
   end
 end

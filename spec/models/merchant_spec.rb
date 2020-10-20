@@ -31,7 +31,6 @@ describe Merchant, type: :model do
         end
         expected = merchants[-2..-1].sort.reverse
 
-
       expect(Merchant.highest_revenue(2)).to eq(expected)
     end
   end
