@@ -40,20 +40,20 @@ describe "Items API" do
 
       item = JSON.parse(response.body)
 
-      expect(item["data"][0]["attributes"]).to have_key('description')
-      expect(item["data"][0]["attributes"]['description']).to be_a(String)
+      expect(item["data"]["attributes"]).to have_key('description')
+      expect(item["data"]["attributes"]['description']).to be_a(String)
 
-      expect(item["data"][0]["attributes"]).to have_key('unit_price')
-      expect(item["data"][0]["attributes"]['unit_price']).to be_an(Float)
+      expect(item["data"]["attributes"]).to have_key('unit_price')
+      expect(item["data"]["attributes"]['unit_price']).to be_an(Float)
 
-      expect(item["data"][0]["attributes"]).to have_key('merchant_id')
-      expect(item["data"][0]["attributes"]['merchant_id']).to be_an(Integer)
+      expect(item["data"]["attributes"]).to have_key('merchant_id')
+      expect(item["data"]["attributes"]['merchant_id']).to be_an(Integer)
 
-      expect(item["data"][0]["attributes"]).to have_key('created_at')
-      expect(item["data"][0]["attributes"]['created_at']).to be_a(String)
+      expect(item["data"]["attributes"]).to have_key('created_at')
+      expect(item["data"]["attributes"]['created_at']).to be_a(String)
 
-      expect(item["data"][0]["attributes"]).to have_key('updated_at')
-      expect(item["data"][0]["attributes"]['updated_at']).to be_a(String)
+      expect(item["data"]["attributes"]).to have_key('updated_at')
+      expect(item["data"]["attributes"]['updated_at']).to be_a(String)
   end
 
   it "can create a new item" do
@@ -163,7 +163,7 @@ describe "Items API" do
 
     result = JSON.parse(response.body)
 
-    expect(result['id']).to eq(data[:id])
+    expect(result['data']['id']).to eq("#{data[:id]}")
 
   end
 
