@@ -3,12 +3,17 @@ Rails.application.routes.draw do
     namespace :v1 do
       namespace :merchants do
         get '/:id/items', to: 'items#index'
+        get '/find', to: 'search#show'
+        get '/find_all', to: 'search#index'
       end
-      resources :items, only: [:index, :show, :create, :update, :destroy]
       resources :merchants, only: [:index, :show, :create, :update, :destroy]
+
       namespace :items do
         get '/:id/merchant', to: 'merchants#show'
+        get '/find', to: 'search#show'
+        get '/find_all', to: 'search#index'
       end
+      resources :items, only: [:index, :show, :create, :update, :destroy]
     end
   end
 end
