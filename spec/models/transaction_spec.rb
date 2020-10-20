@@ -28,7 +28,6 @@ describe Transaction, type: :model do
       2.times do
         create(:transaction, invoice_id: invoices.pop.id, result: 'failed')
       end
-
       expect(Transaction.successful).to eq(result)
     end
   end

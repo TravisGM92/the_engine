@@ -9,4 +9,8 @@ class Merchant < ApplicationRecord
   def self.downcase_split_names(name)
     name.downcase.split(" ")
   end
+
+  def self.highest_revenue(limit)
+    select("merchants.*, SUM(invoice_items.quantity * invoice_items.unit_price) AS revenue").joins(:invoices).joins(:transactions).joins(:invoice_items).merge(Transaction.successful).group(:id).order("revenue DESC").limit(limit)
+  end
 end
