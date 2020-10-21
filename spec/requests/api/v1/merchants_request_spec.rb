@@ -223,4 +223,51 @@ describe "Items API" do
     result = JSON.parse(response.body)
     expect(result['data'].length).to eq(2)
   end
+
+  it "can find merchants who have sold the most items" do
+    merchants = create_list(:merchant, 3)
+    customers = create_list(:customer, 3)
+    invoices = []
+    merchants.each{ |merchant| create_list(:item, 2, merchant_id: merchant.id)}
+    merchants.each{ |merchant| customers.each{ |customer| invoices << create(:invoice, merchant_id: merchant.id, customer_id: customer.id)}}
+    invoices.each{ |invoice| create(:transaction, invoice_id: invoice.id)}
+
+    x = 0
+    invoices.each do |invoice|
+      create(:invoice_item, invoice_id: invoice.id, quantity: x += 100, unit_price: 10)
+    end
+
+    get "/api/v1/merchants/most_items?quantity=2"
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+    expect(result['data'].length).to eq(2)
+  end
+
+  it "can get revenue within specific date range" do
+    merchants = create_list(:merchant, 3)
+    customers = create_list(:customer, 3)
+    invoices = []
+    merchants.each{ |merchant| create_list(:item, 2, merchant_id: merchant.id)}
+    merchants.each{ |merchant| customers.each{ |customer| invoices << create(:invoice, merchant_id: merchant.id, customer_id: customer.id)}}
+    invoices[0..4].each{ |invoice| create(:transaction, invoice_id: invoice.id)}
+    x = 0
+    invoices[0..4].each do |invoice|
+      create(:invoice_item, invoice_id: invoice.id, quantity: x += 100, unit_price: 10)
+    end
+
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['data'].length).to eq(0)
+    
+    invoices[5..8].each do |invoice|
+      create(:invoice_item, invoice_id: invoice.id, quantity: x += 100, unit_price: 10)
+    end
+    invoices[5..8].each{ |invoice| create(:transaction, invoice_id: invoice.id)}
+
+    get "/api/v1/revenue?start=2020-01-09&end=2020-12-24"
+
+  end
 end

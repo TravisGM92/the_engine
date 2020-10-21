@@ -31,4 +31,5 @@ describe Transaction, type: :model do
       expect(Transaction.successful).to eq(result)
     end
   end
+
 end
