@@ -367,4 +367,23 @@ describe 'Items API' do
 
     expect(result['data'].length).to eq(2)
   end
+
+  it 'can create an item with no id passed in params' do
+    merchant = create(:merchant)
+    item1 = create(:item, merchant_id: merchant.id)
+    item_params = {
+      name: 'The hammer',
+      description: 'Nice to hit things with',
+      unit_price: 3,
+      merchant_id: merchant.id,
+      created_at: '01-06-1993',
+      updated_at: '02-12-2000'
+    }
+
+    headers = { 'CONTENT_TYPE' => 'application/json' }
+    post '/api/v1/items', headers: headers, params: JSON.generate(item_params)
+    created_item = Item.last
+    expect(response).to be_successful
+    expect(created_item.id).to eq(item1.id + 1)
+  end
 end

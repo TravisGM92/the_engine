@@ -281,7 +281,7 @@ describe 'Items API' do
     merchants = create(:merchant)
     customers = create(:customer)
     invoice1 = create(:invoice, merchant_id: merchants.id, customer_id: customers.id, status: 'shipped')
-    item1 = create(:item, merchant_id: merchants.id)
+    create(:item, merchant_id: merchants.id)
     create(:invoice_item, invoice_id: invoice1.id, quantity: 10, unit_price: 10)
     create(:transaction, invoice_id: invoice1.id, result: 'success')
 
@@ -292,5 +292,47 @@ describe 'Items API' do
 
     result = JSON.parse(response.body)
     expect(result['data']['attributes']['revenue']).to eq(100.0)
+  end
+
+  it 'can create a merchant with no id passed in params' do
+    first_merchant = create(:merchant)
+    merchant_params = {
+      name: 'George Clooney',
+      created_at: '03-04-04',
+      updated_at: '05-10-19'
+    }
+    headers = { 'CONTENT_TYPE' => 'application/json' }
+    post '/api/v1/merchants', headers: headers, params: JSON.generate(merchant_params)
+    created_merchant = Merchant.last
+
+    expect(response).to be_successful
+    expect(created_merchant.id).to eq(first_merchant.id + 1)
+  end
+
+  it 'can find all merchants by their created_at' do
+    Merchant.create!({
+                       name: 'Hammer George',
+                       created_at: '01-06-1993',
+                       updated_at: '02-12-2000'
+                     })
+
+    merchant2 = Merchant.create!({
+                                   name: 'George Pinky',
+                                   created_at: '02-06-1980',
+                                   updated_at: '04-12-2010'
+                                 })
+
+    Merchant.create!({
+                       name: 'Timothy',
+                       created_at: '01-06-1993',
+                       updated_at: '04-12-2010'
+                     })
+
+    get '/api/v1/merchants/find_all?created_at=02-06-1980'
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+    expect(result['data'].length).to eq(1)
+    expect(result['data'].first['attributes']['id']).to eq(merchant2.id)
   end
 end

@@ -90,15 +90,18 @@ describe Merchant, type: :model do
     end
   end
 
-  describe ".merchant_revenue(id)" do
+  describe '.merchant_revenue(id)' do
     it "grabs a particular merchants' total revenue" do
-
       merchants = create_list(:merchant, 3)
       customers = create_list(:customer, 3)
       invoices = []
-      merchants.each{ |merchant| create_list(:item, 2, merchant_id: merchant.id)}
-      merchants.each{ |merchant| customers.each{ |customer| invoices << create(:invoice, merchant_id: merchant.id, customer_id: customer.id)}}
-      invoices[0..4].each{ |invoice| create(:transaction, invoice_id: invoice.id, result: 'failed')}
+      merchants.each do |merchant|
+        create_list(:item, 2, merchant_id: merchant.id)
+        customers.each do |customer|
+          invoices << create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+        end
+      end
+      invoices[0..4].each { |invoice| create(:transaction, invoice_id: invoice.id, result: 'failed') }
       x = 0
       invoices[0..4].each do |invoice|
         create(:invoice_item, invoice_id: invoice.id, quantity: x += 200, unit_price: 10)
@@ -106,12 +109,19 @@ describe Merchant, type: :model do
       merch_id = Merchant.first[:id]
       expect(Merchant.merchant_revenue(merch_id)).to eq(0.0)
 
-      invoice1 = create(:invoice, merchant_id: Merchant.first.id, customer_id: Customer.first.id, status: "shipped")
+      invoice1 = create(:invoice, merchant_id: Merchant.first.id, customer_id: Customer.first.id, status: 'shipped')
       create(:transaction, invoice_id: invoice1.id, result: 'success')
       create(:invoice_item, invoice_id: invoice1.id, quantity: 100, unit_price: 100)
 
       expected = InvoiceItem.last.quantity * InvoiceItem.last.unit_price
       expect(Merchant.merchant_revenue(merch_id)).to eq(expected)
+    end
+  end
+
+  describe '.downcase_split_names(name)' do
+    it 'can downcase and split a full name' do
+      merchant1 = create(:merchant, name: 'George LaLas')
+      expect(Merchant.downcase_split_names(merchant1.name)).to eq(%w[george lalas])
     end
   end
 end

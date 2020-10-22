@@ -31,12 +31,6 @@ module Api
             render json: ItemSerializer.new(Item.where(attribute => params[attribute]))
           end
         end
-
-        private
-
-        def item_params
-          params.permit(:id, :name, :description, :unit_price, :merchant_id, :created_at, :updated_at)
-        end
       end
     end
   end

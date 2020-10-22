@@ -19,14 +19,8 @@ module Api
             render json: MerchantSerializer.new(Merchant.where('LOWER(name) LIKE ?', "%#{params[:name].downcase}%"))
           else
             attribute = params.keys[0].to_sym
-            render json: Item.where(attribute => params[attribute])
+            render json: MerchantSerializer.new(Merchant.where(attribute => params[attribute]))
           end
-        end
-
-        private
-
-        def merchant_params
-          params.permit(:id, :name, :created_at, :updated_at)
         end
       end
     end
