@@ -276,4 +276,29 @@ describe 'Items API' do
 
     expect(result['data']['attributes']['revenue']).to eq(InvoiceItem.all.sum('quantity * unit_price'))
   end
+
+  it 'can get revenue for one specific merchant' do
+    merchants = create_list(:merchant, 3)
+    customers = create_list(:customer, 3)
+    invoices = []
+    merchants.each do |merchant|
+      create_list(:item, 2, merchant_id: merchant.id)
+      customers.each do |customer|
+        invoices << create(:invoice, merchant_id: merchant.id, customer_id: customer.id, status: 'shipped')
+      end
+    end
+    invoices[0..4].each { |invoice| create(:transaction, invoice_id: invoice.id, result: 'success') }
+    x = 0
+    invoices[0..4].each do |invoice|
+      create(:invoice_item, invoice_id: invoice.id, quantity: x += 200, unit_price: 10)
+    end
+    merch_id = Merchcant.first
+    get "/api/v1/merchants/#{merch_id}/revenue"
+
+    expect(response).to be_successful
+
+    result = JSON.parse(response.body)
+
+    expect(result['data']['attributes']['revenue']).to eq(InvoiceItem.all.sum('quantity * unit_price'))
+  end
 end
