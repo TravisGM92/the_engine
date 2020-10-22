@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-describe "Items API" do
-  it "sends a list of items" do
+describe 'Items API' do
+  it 'sends a list of items' do
     # customer = create(:customer)
     # merchant = create(:merchant)
     # 5.times do
