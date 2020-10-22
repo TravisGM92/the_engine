@@ -29,13 +29,20 @@ class Merchant < ApplicationRecord
   end
 
   def self.revenue_within_dates(start, finish)
-    x = start.to_date.beginning_of_day
-    y = finish.to_date.end_of_day
+    beginning = start.to_date.beginning_of_day
+    ending = finish.to_date.end_of_day
     select('invoices.*')
       .joins(invoices: %i[invoice_items transactions])
       .where(transactions: { result: 'success' })
       .where(invoices: { status: 'shipped' })
-      .where(invoices: { updated_at: x...y })
+      .where(invoices: { updated_at: beginning...ending })
       .sum('invoice_items.quantity * invoice_items.unit_price').round(2)
+  end
+
+  def self.merchant_revenue(id)
+    joins(invoices: [:invoice_items, :transactions])
+      .where(invoices: { status: 'shipped' })
+      .merge(Transaction.successful)
+      .sum('invoice_items.quantity * invoice_items.unit_price')
   end
 end
