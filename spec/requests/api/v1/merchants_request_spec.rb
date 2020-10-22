@@ -249,12 +249,13 @@ describe "Items API" do
     customers = create_list(:customer, 3)
     invoices = []
     merchants.each{ |merchant| create_list(:item, 2, merchant_id: merchant.id)}
-    merchants.each{ |merchant| customers.each{ |customer| invoices << create(:invoice, merchant_id: merchant.id, customer_id: customer.id)}}
-    invoices[0..4].each{ |invoice| create(:transaction, invoice_id: invoice.id)}
+    merchants.each{ |merchant| customers.each{ |customer| invoices << create(:invoice, merchant_id: merchant.id, customer_id: customer.id, status: 'shipped')}}
+    invoices[0..4].each{ |invoice| create(:transaction, invoice_id: invoice.id, result: 'success')}
     x = 0
     invoices[0..4].each do |invoice|
-      create(:invoice_item, invoice_id: invoice.id, quantity: x += 100, unit_price: 10)
+      create(:invoice_item, invoice_id: invoice.id, quantity: x += 200, unit_price: 10)
     end
+
     get "/api/v1/revenue?start=2020-01-09&end=2020-12-24"
 
     expect(response).to be_successful

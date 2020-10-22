@@ -30,8 +30,5 @@ describe Transaction, type: :model do
       end
       expect(Transaction.successful).to eq(result)
     end
-    it "does it" do
-      Transaction.revenue_within_dates('2012-03-09', '2012-03-24')
-    end
   end
 end
