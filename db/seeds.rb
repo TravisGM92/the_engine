@@ -8,12 +8,12 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 require 'csv'
-require './app/models/customer'
-require './app/models/invoice_item'
-require './app/models/invoice'
-require './app/models/item'
-require './app/models/merchant'
-require './app/models/transaction'
+# require './app/models/customer'
+# require './app/models/invoice_item'
+# require './app/models/invoice'
+# require './app/models/item'
+# require './app/models/merchant'
+# require './app/models/transaction'
 
 InvoiceItem.delete_all
 InvoiceItem.reset_pk_sequence
