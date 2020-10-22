@@ -255,19 +255,12 @@ describe "Items API" do
     invoices[0..4].each do |invoice|
       create(:invoice_item, invoice_id: invoice.id, quantity: x += 100, unit_price: 10)
     end
+    get "/api/v1/revenue?start=2020-01-09&end=2020-12-24"
 
     expect(response).to be_successful
 
     result = JSON.parse(response.body)
 
-    expect(result['data'].length).to eq(0)
-    
-    invoices[5..8].each do |invoice|
-      create(:invoice_item, invoice_id: invoice.id, quantity: x += 100, unit_price: 10)
-    end
-    invoices[5..8].each{ |invoice| create(:transaction, invoice_id: invoice.id)}
-
-    get "/api/v1/revenue?start=2020-01-09&end=2020-12-24"
-
+    expect(result['data']['attributes']['revenue']).to eq(InvoiceItem.all.sum('quantity * unit_price'))
   end
 end

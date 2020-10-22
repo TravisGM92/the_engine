@@ -16,6 +16,8 @@ Rails.application.routes.draw do
         get '/find_all', to: 'search#index'
       end
       resources :items, only: [:index, :show, :create, :update, :destroy]
+
+      get '/revenue', to: 'merchants/most_revenue#show'
     end
   end
 end
