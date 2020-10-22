@@ -27,6 +27,8 @@ class Merchant < ApplicationRecord
   end
 
   def self.revenue_within_dates(start, finish)
-    select('transactions.*').joins(invoices: [:invoice_items, :transactions]).where(transactions: {created_at: start..finish}).sum('invoice_items.quantity * invoice_items.unit_price')
+    x = start.to_date.beginning_of_day
+    y = finish.to_date.end_of_day
+    select('invoices.*').joins(invoices: [:invoice_items, :transactions]).where(transactions: {result: 'success'}).where(invoices: {status: 'shipped'}).where(invoices: {updated_at: x...y}).sum('invoice_items.quantity * invoice_items.unit_price').round(2)
   end
 end
