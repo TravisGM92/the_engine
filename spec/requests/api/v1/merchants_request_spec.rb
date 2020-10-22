@@ -335,4 +335,14 @@ describe 'Items API' do
     expect(result['data'].length).to eq(1)
     expect(result['data'].first['attributes']['id']).to eq(merchant2.id)
   end
+
+  it 'gets an error when no params are passed through when searching for merchant by name' do
+
+    get '/api/v1/merchants/find_all?name='
+
+    result = JSON.parse(response.body)
+    # require "pry"; binding.pry
+    expect(result['data'].length).to eq(1)
+    expect(result['data'].first['attributes']['id']).to eq(merchant2.id)
+  end
 end
