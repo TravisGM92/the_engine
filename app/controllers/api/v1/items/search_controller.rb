@@ -5,13 +5,14 @@ module Api
     module Items
       class SearchController < ApplicationController
         def show
-          case params.keys[0]
-          when 'name'
+          if params.keys[0] == 'name' && params.values[0] != ""
             render json: ItemSerializer.new(Item.where('LOWER(name) LIKE ?', "%#{params[:name].downcase}%").first)
-          when 'description'
+          elsif params.keys[0] == 'description' && params.values[0] != ""
             render json: ItemSerializer.new(Item.where(['description LIKE ?', "%#{params[:description]}%"]).first)
-          when 'unit_price'
+          elsif params.keys[0] == 'unit_price' && params.values[0] != ""
             render json: ItemSerializer.new(Item.where(unit_price: params[:unit_price]))
+          elsif params.values[0] == ""
+            render json: {data: {id: "null", attributes: {code: 204, message: "#{params.keys[0]} missing"}}}
           else
             attribute = params.keys[0].to_sym
             render json: ItemSerializer.new(Item.where(attribute => params[attribute]))
@@ -19,13 +20,14 @@ module Api
         end
 
         def index
-          case params.keys[0]
-          when 'name'
+          if params.keys[0] == 'name' && params.values[0] != ""
             render json: ItemSerializer.new(Item.where(['LOWER(name) LIKE ?', "%#{params[:name].downcase}%"]))
-          when 'description'
+          elsif params.keys[0] == 'description' && params.values[0] != ""
             render json: ItemSerializer.new(Item.where(['description LIKE ?', "%#{params[:description]}%"]))
-          when 'unit_price'
+          elsif params.keys[0] == 'unit_price' && params.values[0] != ""
             render json: ItemSerializer.new(Item.where(unit_price: params[:unit_price]))
+          elsif params.values[0] == ""
+            render json: {data: {id: "null", attributes: {code: 204, message: "#{params.keys[0]} missing"}}}
           else
             attribute = params.keys[0].to_sym
             render json: ItemSerializer.new(Item.where(attribute => params[attribute]))

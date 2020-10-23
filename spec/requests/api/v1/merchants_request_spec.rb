@@ -341,8 +341,28 @@ describe 'Items API' do
     get '/api/v1/merchants/find_all?name='
 
     result = JSON.parse(response.body)
-    # require "pry"; binding.pry
-    expect(result['data'].length).to eq(1)
-    expect(result['data'].first['attributes']['id']).to eq(merchant2.id)
+
+    expect(result['data']['attributes']['code']).to eq(204)
+    expect(result['data']['attributes']['message']).to eq('name missing')
+  end
+
+  it 'gets 204 error when no params are passed through when searching for merchant by id' do
+
+    get '/api/v1/merchants/find_all?id='
+
+    result = JSON.parse(response.body)
+
+    expect(result['data']['attributes']['code']).to eq(204)
+    expect(result['data']['attributes']['message']).to eq('id missing')
+  end
+
+  it 'gets 204 error when there is no match for one merchant' do
+
+    get '/api/v1/merchants/find?name='
+
+    result = JSON.parse(response.body)
+
+    expect(result['data']['attributes']['code']).to eq(204)
+    expect(result['data']['attributes']['message']).to eq('name missing')
   end
 end
