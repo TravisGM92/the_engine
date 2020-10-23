@@ -337,7 +337,6 @@ describe 'Items API' do
   end
 
   it 'gets an error when no params are passed through when searching for merchant by name' do
-
     get '/api/v1/merchants/find_all?name='
 
     result = JSON.parse(response.body)
@@ -347,7 +346,6 @@ describe 'Items API' do
   end
 
   it 'gets 204 error when no params are passed through when searching for merchant by id' do
-
     get '/api/v1/merchants/find_all?id='
 
     result = JSON.parse(response.body)
@@ -357,7 +355,6 @@ describe 'Items API' do
   end
 
   it 'gets 204 error when there is no match for one merchant' do
-
     get '/api/v1/merchants/find?name='
 
     result = JSON.parse(response.body)

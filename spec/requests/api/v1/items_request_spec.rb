@@ -388,7 +388,6 @@ describe 'Items API' do
   end
 
   it 'gets 204 error when there is no match for one item' do
-
     get '/api/v1/items/find?name='
 
     result = JSON.parse(response.body)
@@ -398,7 +397,6 @@ describe 'Items API' do
   end
 
   it 'gets 204 error when there is no match for several items' do
-
     get '/api/v1/items/find_all?name='
 
     result = JSON.parse(response.body)
