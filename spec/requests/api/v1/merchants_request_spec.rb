@@ -127,7 +127,7 @@ describe 'Items API' do
 
     id = Item.first.id
 
-    get "/api/v1/items/#{id}/merchant"
+    get "/api/v1/items/#{id}/merchants"
     merchant_response = JSON.parse(response.body, symbolize_names: true)
     first_merchant = Merchant.first
 
