@@ -386,4 +386,24 @@ describe 'Items API' do
     expect(response).to be_successful
     expect(created_item.id).to eq(item1.id + 1)
   end
+
+  it 'gets 204 error when there is no match for one item' do
+
+    get '/api/v1/items/find?name='
+
+    result = JSON.parse(response.body)
+
+    expect(result['data']['attributes']['code']).to eq(204)
+    expect(result['data']['attributes']['message']).to eq('name missing')
+  end
+
+  it 'gets 204 error when there is no match for several items' do
+
+    get '/api/v1/items/find_all?name='
+
+    result = JSON.parse(response.body)
+
+    expect(result['data']['attributes']['code']).to eq(204)
+    expect(result['data']['attributes']['message']).to eq('name missing')
+  end
 end
